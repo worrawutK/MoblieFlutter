@@ -1,3 +1,4 @@
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -7,7 +8,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   // Explicit
-
+  String resultCode = '';
   // Method
   Widget authenButton() {
     return RaisedButton(
@@ -16,8 +17,18 @@ class _HomeState extends State<Home> {
         'Authentication',
         style: TextStyle(color: Colors.white),
       ),
-      onPressed: () {},
+      onPressed: () {
+        print('You Click Authen');
+        readQRcode();
+      },
     );
+  }
+
+  Future<void> readQRcode() async {
+    try {
+      resultCode = await BarcodeScanner.scan();
+      print('resultCode = $resultCode');
+    } catch (e) {}
   }
 
   Widget showLogo() {
@@ -30,7 +41,7 @@ class _HomeState extends State<Home> {
 
   Widget showAppName() {
     return Text(
-      'Wut Rist',
+      'Wut RistX',
       style: TextStyle(
         color: Colors.red.shade900,
         fontSize: 30.0,
@@ -47,7 +58,11 @@ class _HomeState extends State<Home> {
         // child: Container(decoration: BoxDecoration(color: Colors.blue),
         child: Container(
           decoration: BoxDecoration(
-              gradient: RadialGradient(colors: [Colors.white, Colors.blue],radius: 1.0,center: Alignment.topRight,tileMode: TileMode.clamp)),
+              gradient: RadialGradient(
+                  colors: [Colors.white, Colors.blue],
+                  radius: 1.0,
+                  center: Alignment.topRight,
+                  tileMode: TileMode.clamp)),
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
