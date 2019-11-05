@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -23,13 +26,24 @@ class _HomeState extends State<Home> {
       },
     );
   }
-
+//async await
   Future<void> readQRcode() async {
     try {
       resultCode = await BarcodeScanner.scan();
       print('resultCode = $resultCode');
+      getUserWhereResultCode();
     } catch (e) {}
   }
+ Future<void>getUserWhereResultCode() async{
+   try {
+     String urlAPI = 'http://10.28.50.26/getUserWhereResultWut.php?isAdd=true&ResultCode=$resultCode';
+     Response response  = await get(urlAPI);
+    
+     var result = json.decode(response.body);
+      print('result = $result');
+   } catch (e) {
+   }
+ }
 
   Widget showLogo() {
     return Container(
@@ -41,7 +55,7 @@ class _HomeState extends State<Home> {
 
   Widget showAppName() {
     return Text(
-      'Wut RistX',
+      'Wut Rist',
       style: TextStyle(
         color: Colors.red.shade900,
         fontSize: 30.0,
@@ -59,7 +73,7 @@ class _HomeState extends State<Home> {
         child: Container(
           decoration: BoxDecoration(
               gradient: RadialGradient(
-                  colors: [Colors.white, Colors.blue],
+                  colors: [Colors.white, Colors.blue,Colors.yellow],
                   radius: 1.0,
                   center: Alignment.topRight,
                   tileMode: TileMode.clamp)),
