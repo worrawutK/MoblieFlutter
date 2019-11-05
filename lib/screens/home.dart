@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:wutrist/models/user_model.dart';
+import 'package:wutrist/screens/my_alert.dart';
+import 'package:wutrist/screens/my_service.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,7 +18,7 @@ class _HomeState extends State<Home> {
   // Method
   Widget authenButton() {
     return RaisedButton(
-      color: Colors.orange[300],
+      color: Colors.blue[600],
       child: Text(
         'Authentication',
         style: TextStyle(color: Colors.white),
@@ -26,6 +29,7 @@ class _HomeState extends State<Home> {
       },
     );
   }
+
 //async await
   Future<void> readQRcode() async {
     try {
@@ -34,16 +38,29 @@ class _HomeState extends State<Home> {
       getUserWhereResultCode();
     } catch (e) {}
   }
- Future<void>getUserWhereResultCode() async{
-   try {
-     String urlAPI = 'http://10.28.50.26/getUserWhereResultWut.php?isAdd=true&ResultCode=$resultCode';
-     Response response  = await get(urlAPI);
-    
-     var result = json.decode(response.body);
+
+  Future<void> getUserWhereResultCode() async {
+    try {
+      String urlAPI =
+          'http://10.28.50.26/getUserWhereResultWut.php?isAdd=true&ResultCode=$resultCode';
+      Response response = await get(urlAPI);
+
+      var result = json.decode(response.body);
       print('result = $result');
-   } catch (e) {
-   }
- }
+      if (result.toString() == 'null') {
+         print('test1');
+        normalDialog('Result False', 'No $resultCode in my database', context);
+      } else {
+         print('test2');
+        for (var map in result) {
+          UserModel userModel = UserModel.fromJSON(map);
+          MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context){return MyService(userModel: userModel,);});
+          Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic>route){return false;});
+        }
+      }
+       print('test3');
+    } catch (e) { print('test4');}
+  }
 
   Widget showLogo() {
     return Container(
@@ -57,7 +74,7 @@ class _HomeState extends State<Home> {
     return Text(
       'Wut Rist',
       style: TextStyle(
-        color: Colors.red.shade900,
+        color: Colors.white,
         fontSize: 30.0,
         fontWeight: FontWeight.bold,
         fontStyle: FontStyle.italic,
@@ -73,7 +90,12 @@ class _HomeState extends State<Home> {
         child: Container(
           decoration: BoxDecoration(
               gradient: RadialGradient(
-                  colors: [Colors.white, Colors.blue,Colors.yellow],
+                  colors: [
+                Colors.white,
+                Colors.yellow,
+                Colors.orange,
+                Colors.red
+              ],
                   radius: 1.0,
                   center: Alignment.topRight,
                   tileMode: TileMode.clamp)),
